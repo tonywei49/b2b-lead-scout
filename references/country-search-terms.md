@@ -1,165 +1,236 @@
 # Country Search Terms Reference
 
+Use these as building blocks when generating bilingual lead-search queries. The examples are intentionally short; add the actual product term and, where useful, a business-type qualifier such as `B2B`, `commercial`, `OEM`, `importer`, or `wholesale`.
+
 ## France
 
-**Product terms (fitness equipment example)**:
-- fitness equipment, gym equipment, indoor fitness, materiel fitness, equipement gym
+**Product examples**:
+- fitness equipment
+- gym equipment
+- materiel de fitness
+- equipement de gym
 
-**Business type terms**:
-- distributeur, grossiste, fournisseur, revendeur, prestataire
+**Business terms**:
+- distributeur
+- grossiste
+- fournisseur
+- revendeur
+- importateur
 
 **Example queries**:
-- EN: "indoor fitness equipment distributor France B2B"
-- FR: "distributeur materiel fitness interieur France"
+- EN: `fitness equipment distributor France B2B`
+- FR: `distributeur materiel de fitness France`
 
 ---
 
-## Germany (DACH)
+## Germany
 
-**Product terms**:
-- Fitnessgerate, Sporgerate, Trainingsgerate
+**Product examples**:
+- Fitnessgeraete
+- Trainingsgeraete
+- Sportgeraete
 
-**Business type terms**:
-- Handler, Vertriebspartner, Grosshandler, Fachhandler, Zulieferer
+**Business terms**:
+- Distributor
+- Grosshaendler
+- Lieferant
+- Haendler
+- Importeur
 
 **Example queries**:
-- EN: "fitness equipment distributor Germany B2B"
-- DE: "Fitnessgerate Handler Deutschland"
+- EN: `fitness equipment distributor Germany B2B`
+- DE: `Fitnessgeraete Grosshaendler Deutschland`
 
 ---
 
 ## Spain
 
-**Product terms**:
-- equipamiento fitness, maquinas de gym, material deportivo
+**Product examples**:
+- equipamiento fitness
+- maquinas de gimnasio
+- material deportivo
 
-**Business type terms**:
-- distribuidor, mayorista, proveedor, revendedor
+**Business terms**:
+- distribuidor
+- mayorista
+- proveedor
+- revendedor
+- importador
 
 **Example queries**:
-- EN: "fitness equipment distributor Spain B2B"
-- ES: "distribuidor equipamiento fitness Espana"
+- EN: `fitness equipment distributor Spain B2B`
+- ES: `distribuidor equipamiento fitness Espana`
 
 ---
 
 ## Italy
 
-**Product terms**:
-- attrezzature fitness, macchine gym, equipamiento sportivo
+**Product examples**:
+- attrezzature fitness
+- macchine da palestra
+- attrezzature sportive
 
-**Business type terms**:
-- distributore, grossista, fornitore, rivenditore
+**Business terms**:
+- distributore
+- grossista
+- fornitore
+- rivenditore
+- importatore
 
 **Example queries**:
-- EN: "fitness equipment distributor Italy B2B"
-- IT: "distributore attrezzature fitness Italia"
+- EN: `fitness equipment distributor Italy B2B`
+- IT: `distributore attrezzature fitness Italia`
 
 ---
 
 ## Japan
 
-**Product terms**:
-- フィットネス機器, 健身機器 (kenko serect), トレーニング機器
+**Product examples**:
+- フィットネス機器
+- トレーニング機器
+- ジム機器
 
-**Business type terms**:
-- 代理店, ディストリビューター, 問屋, 卸売, 经销商 (hanbaiki)
+**Business terms**:
+- 販売代理店
+- 卸売
+- 供給業者
+- 輸入業者
+- 販売店
 
 **Example queries**:
-- EN: "fitness equipment distributor Japan B2B"
-- JP: "フィットネス機器 代理店 日本"
+- EN: `fitness equipment distributor Japan B2B`
+- JP: `フィットネス機器 販売代理店 日本`
 
 ---
 
-## Korea
+## South Korea
 
-**Product terms**:
-- 피트니스 장비, 털기器械
+**Product examples**:
+- 피트니스 장비
+- 헬스 기구
+- 운동 기구
 
-**Business type terms**:
-- 유통업체, 딜러, 총판,经销商
+**Business terms**:
+- 유통업체
+- 도매업체
+- 공급업체
+- 수입업체
+- 판매업체
 
 **Example queries**:
-- EN: "fitness equipment distributor South Korea B2B"
-- KR: "피트니스 장비 유통업체 한국"
+- EN: `fitness equipment distributor South Korea B2B`
+- KR: `피트니스 장비 유통업체 한국`
 
 ---
 
 ## China
 
-**Product terms**:
-- 健身器材, 运动器材, 训练设备
+**Product examples**:
+- 健身器材
+- 运动器材
+- 训练设备
 
-**Business type terms**:
-- 经销商, 代理商, 批发商, 供货商, 经销商
+**Business terms**:
+- 经销商
+- 批发商
+- 供应商
+- 代理商
+- 进口商
 
 **Example queries**:
-- EN: "fitness equipment distributor China B2B"
-- CN: "健身器材经销商 中国"
+- EN: `fitness equipment distributor China B2B`
+- CN: `健身器材 经销商 中国`
 
 ---
 
 ## Taiwan
 
-**Product terms**:
-- 健身器材, 運動器材, 訓練設備
+**Product examples**:
+- 健身器材
+- 運動器材
+- 訓練設備
 
-**Business type terms**:
-- 經銷商, 代理商, 批發商, 供货商
+**Business terms**:
+- 經銷商
+- 批發商
+- 供應商
+- 代理商
+- 進口商
 
 **Example queries**:
-- EN: "fitness equipment distributor Taiwan B2B"
-- TW: "健身器材經銷商 台灣"
+- EN: `fitness equipment distributor Taiwan B2B`
+- TW: `健身器材 經銷商 台灣`
 
 ---
 
 ## Brazil
 
-**Product terms**:
-- equipamentos de fitness, maquinas de gym, apparilhos de exercicios
+**Product examples**:
+- equipamentos de fitness
+- aparelhos de academia
+- equipamentos esportivos
 
-**Business type terms**:
-- distribuidor, atacadista, fornecedor, revendedor
+**Business terms**:
+- distribuidor
+- atacadista
+- fornecedor
+- revendedor
+- importador
 
 **Example queries**:
-- EN: "fitness equipment distributor Brazil B2B"
-- PT-BR: "distribuidor equipamentos fitness Brasil"
+- EN: `fitness equipment distributor Brazil B2B`
+- PT-BR: `distribuidor de equipamentos fitness Brasil`
 
 ---
 
 ## Mexico / Latin America
 
-**Product terms**:
-- equipamiento fitness, maquinas de gym, articulos deportivos
+**Product examples**:
+- equipamiento fitness
+- maquinas de gimnasio
+- articulos deportivos
 
-**Business type terms**:
-- distribuidor, mayorista, proveedor, importador
+**Business terms**:
+- distribuidor
+- mayorista
+- proveedor
+- importador
+- revendedor
 
 **Example queries**:
-- EN: "fitness equipment distributor Mexico B2B"
-- ES: "distribuidor equipamiento fitness Mexico"
+- EN: `fitness equipment distributor Mexico B2B`
+- ES: `distribuidor equipamiento fitness Mexico`
 
 ---
 
 ## USA / General English
 
-**Product terms**:
-- fitness equipment, gym equipment, commercial fitness, exercise equipment
+**Product examples**:
+- fitness equipment
+- gym equipment
+- commercial fitness equipment
+- exercise equipment
 
-**Business type terms**:
-- distributor, wholesaler, supplier, reseller, dealer, B2B provider
+**Business terms**:
+- distributor
+- wholesaler
+- supplier
+- reseller
+- dealer
+- importer
 
 **Example queries**:
-- "commercial fitness equipment distributor USA B2B"
-- "gym equipment wholesaler United States"
+- `commercial fitness equipment distributor USA B2B`
+- `gym equipment wholesaler United States`
 
 ---
 
-## Search Tips
+## Query Tips
 
-1. **Multi-word product terms** often yield better results than single words
-2. **Add "B2B"** to filter out consumer results
-3. **Add "commercial"** or "professional" for trade-facing companies
-4. **For distributors**, try both "distributor" and "dealer" / "reseller"
-5. **For manufacturers**, add "OEM", "factory", "manufacturer"
-6. **For trading companies**, add "import", "export", "trading", "international"
-7. **Local language searches** typically find 30-50% more local companies that don't appear in English results
+1. Multi-word product phrases outperform single generic keywords.
+2. Add `B2B`, `commercial`, or `wholesale` to reduce consumer-only noise.
+3. For manufacturer searches, test `OEM`, `factory`, and `manufacturer`.
+4. For distributor searches, test both `distributor` and `dealer` / `reseller`.
+5. For trading firms, add `import`, `export`, `trading`, or `sourcing`.
+6. If the first pass is weak, retry with city names in the target market.
+7. Local-language searches usually surface companies that never appear in English-only results.

@@ -1,143 +1,286 @@
 ---
 name: b2b-lead-scout
-description: B2B lead discovery skill. Searches for companies selling specific products in target regions, collects company background (name, location, website, contact person, email, main products), and outputs structured CSV/MD files. Use when doing outbound lead generation, finding B2B distributors or resellers in a specific country or region, or building a prospect list for cold outreach.
+description: B2B lead discovery skill. Finds companies selling specific products in target regions, verifies whether they are relevant trade-facing businesses, enriches each lead with evidence-backed company/contact data, and outputs structured CSV/MD files for outbound prospecting.
 ---
 
 # B2B Lead Scout
 
 ## Overview
 
-Search for B2B companies selling specific products in target regions. Outputs structured lead lists with company info, contacts, and confidence scores.
+Search for B2B companies selling a specific product in a target region. The goal is not just to collect names, but to produce a shortlist that is evidence-backed, deduplicated, and usable for outreach.
 
-**Data fields**: company_name, location, website, contact_person, contact_title, email, main_products, business_type, confidence_score, source_url, note
+**Primary use cases**:
+- Build prospect lists for outbound sales
+- Find distributors, wholesalers, importers, dealers, or manufacturers in a country or region
+- Research local channel partners before market entry
 
-**Output**: .csv file + .md summary in workspace
+**Outputs**:
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+
+**Required fields**:
+- company_name
+- country
+- city_or_region
+- official_website
+- source_url
+- evidence_url
+- contact_person
+- contact_title
+- email
+- email_source
+- main_products
+- business_type
+- verification_status
+- confidence_score
+- note
 
 ---
 
 ## Step 1 - Parse the Request
 
-Extract from user input:
+Extract from the user request:
 
-- **Region**: country, city, or multi-country region (e.g., France, DACH, Southeast Asia)
-- **Product**: product/service being sold (e.g., indoor fitness equipment, industrial sensors)
-- **B2B type**: brand manufacturer / distributor / reseller / trading company (if not stated, assume all)
+- **Region**: country, city, or multi-country region such as `France`, `DACH`, or `Southeast Asia`
+- **Product**: product or service being sold
+- **Business type**: manufacturer / distributor / wholesaler / reseller / importer / trading company
 
-If ambiguous, ask one clarifying question before proceeding.
+If business type is not specified, search broadly first and classify later.
+
+Ask one clarifying question only if one of these is missing or materially ambiguous:
+- target region
+- product category
+- whether the user wants manufacturers only vs all trade-facing sellers
 
 ---
 
-## Step 2 - Build Search Queries
+## Step 2 - Build Query Sets
 
-Always search in **English + local language** of the target country. Many local B2B companies only appear in local language.
+Always search in **English + local language** when the target market is not primarily English-speaking. Local-language search is mandatory because many relevant companies do not rank well in English.
 
-Run 3 EN + 3 local = 6 queries in parallel.
+### Stage 1 Query Set
 
-See references/country-search-terms.md for pre-built terms per country.
+Run these in parallel:
+- 3 English queries
+- 3 local-language queries
 
-### Example (France + indoor fitness equipment)
+Build them from:
+- product term
+- business type term
+- region term
+- optional trade qualifier such as `B2B`, `commercial`, `wholesale`, `OEM`, `supplier`, `dealer`, `importer`
 
-EN:
-1. indoor fitness equipment distributor France B2B
-2. commercial gym equipment supplier France
-3. fitness equipment wholesaler France
+Use `references/country-search-terms.md` for local-language business terms and example phrasing.
 
-FR:
-4. distributeur materiel fitness interieur France
-5. fournisseur equipement gym commercial France
-6. grossiste materiel fitness France B2B
+### Stage 2 Query Set
+
+If Stage 1 returns fewer than 5 usable companies, expand with 4-8 more queries using:
+- synonyms for the product
+- alternate business types
+- `importer`, `dealer`, `supplier`, `OEM`, `manufacturer`, `wholesale`
+- city-level searches for major cities in the region
+
+For multi-country regions such as `DACH` or `SEA`, split by country and run each country separately.
 
 ---
 
 ## Step 3 - Execute Search
 
-Use **Tavily** as primary search engine.
+Use **Tavily** as the primary search engine.
 
-python skills/tavily-search/tavily.py search QUERY --depth advanced --max-results 20
+Execution requirements:
+- run the initial query set in parallel
+- collect at least title, snippet, and URL for each result
+- prefer official websites, product pages, catalog pages, dealer pages, and team/contact pages
+- treat marketplace pages, directory sites, and news articles as secondary evidence only
 
-Run all 6 queries in parallel, collect all results.
-
----
-
-## Step 4 - Deduplicate Companies
-
-Merge results from all query variations:
-- Same company name / domain - keep highest confidence entry
-- Same website URL - merge contact fields
-- Use domain as primary deduplication key
+Do not hardcode a single script path. Use the available Tavily tool or the environment's Tavily search wrapper.
 
 ---
 
-## Step 5 - Enrich with Company + People Research
+## Step 4 - Extract Candidate Companies
 
-### 5a. Company Background
+For each search result, extract or infer:
+- candidate company name
+- candidate domain
+- candidate country or city
+- possible product relevance
+- possible business type
 
-Using Tavily search for each company:
-- Company overview (founding, size, location)
-- Main products/services
-- Business type (brand manufacturer / distributor / reseller / wholesaler / trading company)
+Do not treat a listing platform or marketplace as the company itself unless the company identity is explicit.
 
-### 5b. Contact Discovery
+---
+
+## Step 5 - Deduplicate Carefully
+
+Use domain as the primary key, but do not rely on it alone.
+
+Deduplication rules:
+- normalize URLs before comparing: remove protocol noise, `www`, tracking params, and trailing slash
+- merge entries when `official_website` matches
+- also compare `company_name + country` for likely duplicates
+- keep the strongest evidence bundle, not just the first result
+- keep `source_url` separate from `official_website`
+
+Do not merge distinct subsidiaries or country branches unless the legal entity is clearly the same and the output is meant to be group-level.
+
+---
+
+## Step 6 - Enrich Company Data
+
+For each deduplicated company, verify against the official website when possible.
+
+Collect:
+- official website
+- city / country
+- short company description
+- main products or product categories
+- business type
+- evidence URL showing the product match
+
+Prefer official evidence in this order:
+1. product page
+2. category page
+3. about page
+4. contact page
+
+If only directory/news evidence exists, mark the lead for manual review.
+
+---
+
+## Step 7 - Find a Contact
 
 Priority order:
-1. Official website Contact/Team page - direct email if listed
-2. LinkedIn - find key contact (CEO, Sales Director, Purchasing Manager)
-3. Hunter.io (if available) - domain search
-4. Apollo.io (if available) - domain search
-5. Tavily deep search - search for site:company.com email or company.com contact
+1. official website contact or team page
+2. official email on website
+3. LinkedIn public profile for a relevant role
+4. Hunter.io or Apollo.io domain lookup, if available
+5. additional Tavily searches such as `site:company.com email`, `site:company.com contact`, or `[company name] sales manager`
+
+Preferred contact roles:
+- Sales Director
+- Business Development Manager
+- Export Manager
+- Purchasing Manager
+- CEO / Founder for small companies
+
+Only collect publicly visible business contact data. Prefer role-based or work email over personal data.
 
 ---
 
-## Step 6 - Confidence Scoring
+## Step 8 - Classify Business Type
 
-Score each lead 1-10 based on data completeness:
+Choose the best-fit label:
 
-9-10: Email confirmed + contact person confirmed + website complete + product match clear
-7-8: Email confirmed + product match + website complete
-5-6: Website confirmed + product match confirmed, no direct email/contact
-3-4: Product match likely based on search snippet, no direct verification
-1-2: Company mentioned in article/news, unclear if actually selling the product
+- `brand_manufacturer`: makes the product or owns the brand
+- `distributor`: distributes one or more brands to dealers or resellers
+- `wholesaler`: sells in bulk, often trade-only
+- `reseller`: mainly sells finished goods onward, often to end buyers or smaller accounts
+- `importer`: emphasizes import and local distribution
+- `trading_company`: intermediary focused on sourcing / international trade
+- `unknown`: insufficient evidence
 
-Additive factors:
-- Email found = +3
-- Contact name found = +2
-- Website complete = +1
-- Product explicitly mentioned on site = +2
-- Comes from product page vs news/listing = +2
+Base the classification on explicit website language whenever possible.
 
 ---
 
-## Step 7 - Classify Business Type
+## Step 9 - Score Confidence
 
-- brand_manufacturer - makes the product
-- distributor - distributes multiple brands, sells to retailers
-- reseller - sells to end customers
-- wholesaler - bulk quantities
-- trading_company - international trade intermediary
-- unknown - insufficient data
+Use a **deterministic** formula.
+
+Start from `0` and add:
+- official website confirmed: `+2`
+- product explicitly shown on official site: `+3`
+- business type explicitly supported by evidence: `+1`
+- named contact found: `+1`
+- business email found: `+2`
+- evidence comes from official product/category/contact page rather than a directory/news page: `+1`
+
+Apply penalties:
+- only directory/listing evidence, no official site confirmation: `-3`
+- company relevance inferred only from snippet, not verified: `-2`
+- no product evidence on site: `-2`
+
+Then clamp the result to `1-10`.
+
+Verification labels:
+- `verified`: official site confirms product relevance
+- `partial`: company is likely relevant but evidence is incomplete
+- `manual_review`: only indirect or weak evidence is available
+
+Interpretation:
+- `9-10`: strong lead, outreach-ready
+- `7-8`: good lead, minor gaps only
+- `5-6`: plausible lead, should be reviewed before outreach
+- `1-4`: weak or indirect lead
 
 ---
 
-## Step 8 - Output Files
+## Step 10 - Write Output Files
 
-### CSV Output
+### CSV
 
-File: leads_[product]_[region]_[YYYY-MM-DD].csv
-Encoding: UTF-8 with BOM (for Excel compatibility)
-Columns: company_name, location, website, contact_person, contact_title, email, main_products, business_type, confidence_score, source_url, note
+Filename:
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 
-### MD Summary
+Rules:
+- use UTF-8 with BOM for Excel compatibility
+- slugify `product` and `region` for safe filenames
+- one row per company
 
-File: leads_[product]_[region]_[YYYY-MM-DD].md
-Include: total leads, confidence distribution, business type breakdown, top 10 high-confidence leads (score >= 8), data quality issues.
+Columns:
+- company_name
+- country
+- city_or_region
+- official_website
+- source_url
+- evidence_url
+- contact_person
+- contact_title
+- email
+- email_source
+- main_products
+- business_type
+- verification_status
+- confidence_score
+- note
+
+### Markdown Summary
+
+Filename:
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+
+Include:
+- search request summary
+- total leads found
+- confidence distribution
+- business type breakdown
+- top high-confidence leads
+- manual-review leads
+- data quality issues
+- search gaps and suggested follow-up queries
 
 ---
 
-## Step 9 - Quality Checks
+## Step 11 - Quality Gates
 
-Before delivering output, verify:
-- At least 5 companies found
-- At least 50% have website URLs
-- Confidence scores are realistic (not all 10s)
-- No duplicate companies
+Before delivering results, check:
+- at least 5 companies found, or explain why not
+- at least 70% of final rows have an official website
+- confidence scores are distributed realistically
+- no obvious duplicates remain
+- every lead with score `>= 7` has an evidence URL
 - CSV opens correctly in Excel
+
+If quality gates are not met:
+- run Stage 2 expanded search
+- lower confidence where evidence is weak
+- clearly mark unresolved entries as `manual_review`
+
+---
+
+## Execution Notes
+
+- Prefer precision over volume. A smaller verified list is better than a larger noisy list.
+- Keep directories and news pages as discovery inputs, not final evidence when better sources exist.
+- When in doubt, preserve the row but lower the score and explain the gap in `note`.

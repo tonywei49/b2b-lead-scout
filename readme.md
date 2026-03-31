@@ -1,76 +1,82 @@
 # b2b-lead-scout
 
-B2B lead discovery skill for AutoClaw / OpenClaw agents. Searches for companies selling specific products in target regions, collects company background and contact info, and outputs structured CSV/MD lead lists.
+B2B lead discovery skill for AutoClaw / OpenClaw agents. It searches for companies selling specific products in target regions, verifies whether they are relevant trade-facing businesses, enriches each lead with evidence-backed company/contact data, and outputs structured CSV/Markdown lead lists.
 
 ## What It Does
 
-1. Accepts a product + region query (e.g., "法国销售室内健身器材的B2B公司")
-2. Builds bilingual search queries (English + local language)
-3. Searches via Tavily, deduplicates results
-4. Enriches with company background and contact discovery
-5. Scores leads by confidence (1-10)
-6. Outputs `.csv` + `.md` files ready for outreach
+1. Accepts a product + region request, such as `find B2B distributors for industrial sensors in Germany`
+2. Builds bilingual search queries in English + the target market's local language
+3. Searches via Tavily and expands the search when the first pass is too thin
+4. Deduplicates candidates using website + company identity rules
+5. Verifies product relevance from official sources when possible
+6. Enriches each lead with contact and classification data
+7. Scores each lead with a deterministic confidence formula
+8. Outputs `.csv` + `.md` files that are usable for outreach review
 
 ## File Structure
 
-```
+```text
 b2b-lead-scout/
-├── SKILL.md                              # Main skill file
-└── references/
-    └── country-search-terms.md            # Local-language search terms per country
+|-- skill.md
+`-- references/
+    `-- country-search-terms.md
 ```
 
 ## Installation
 
 Place the `b2b-lead-scout/` folder into your OpenClaw skills directory:
 
-```
+```text
 ~/.openclaw-autoclaw/skills/b2b-lead-scout/
 ```
 
 The skill will be auto-discovered on next restart.
 
-## Usage
+## Typical Prompts
 
-Trigger phrases:
-- "找法国销售健身器材的公司"
-- "find B2B distributors Germany"
-- "搜索日本工业传感器供应商"
-- "找美国中间商销售医疗设备"
+- `find B2B gym equipment distributors in France`
+- `search for Japanese industrial sensor suppliers`
+- `build a prospect list of medical device importers in Mexico`
+- `find Taiwan wholesalers selling packaging machinery`
 
 ## Output
 
-Each search produces two files in the workspace:
-- `leads_[product]_[region]_[YYYY-MM-DD].csv` — structured lead list
-- `leads_[product]_[region]_[YYYY-MM-DD].md` — summary report
+Each run produces two files in the workspace:
 
-## Data Fields
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+
+The CSV is intended for spreadsheet review. The Markdown file summarizes result quality, lead mix, and follow-up search gaps.
+
+## Output Fields
 
 | Field | Description |
 |-------|-------------|
 | company_name | Company name |
-| location | City, country |
-| website | Official website |
+| country | Target country |
+| city_or_region | City, state, or region |
+| official_website | Canonical company website |
+| source_url | Discovery source |
+| evidence_url | URL used to verify product relevance |
 | contact_person | Key contact name |
 | contact_title | Job title |
-| email | Email (官网可见优先) |
-| main_products | Main products/services |
-| business_type | brand_manufacturer / distributor / reseller / wholesaler / trading_company |
-| confidence_score | 1-10 based on data completeness |
-| source_url | Primary source link |
-| note | Additional notes |
+| email | Business email |
+| email_source | Website / LinkedIn / Hunter / Apollo / other |
+| main_products | Relevant products or categories |
+| business_type | brand_manufacturer / distributor / wholesaler / reseller / importer / trading_company / unknown |
+| verification_status | verified / partial / manual_review |
+| confidence_score | 1-10 based on explicit scoring rules |
+| note | Gaps, caveats, or context |
 
 ## Dependencies
 
-- **Tavily Search** (`tavily-search` skill) — primary search engine
-- **Hunter.io / Apollo.io** — email enrichment (optional, if available)
+- Tavily search capability
+- Optional enrichment tools such as Hunter.io or Apollo.io
 
-## Confidence Scoring
+## Design Principles
 
-| Score | Criteria |
-|-------|----------|
-| 9-10 | Email + contact + website + product all confirmed |
-| 7-8 | Email + product + website confirmed |
-| 5-6 | Website + product confirmed, no direct contact |
-| 3-4 | Product match likely, not directly verified |
-| 1-2 | From news/listing, unclear if actually selling |
+- Search in English + local language
+- Prefer official websites over directory pages
+- Separate `source_url` from `official_website`
+- Keep weak evidence, but mark it clearly and score it lower
+- Favor a smaller verified list over a larger noisy list
