@@ -45,7 +45,7 @@
 ## Italy
 
 **Product terms**:
-- attrezzature fitness, macchine gym, equipamento sportivo
+- attrezzature fitness, macchine gym, equipamiento sportivo
 
 **Business type terms**:
 - distributore, grossista, fornitore, rivenditore
@@ -59,10 +59,10 @@
 ## Japan
 
 **Product terms**:
-- フィットネス機器, 健身機器, トレーニング機器
+- フィットネス機器, 健身機器 (kenko serect), トレーニング機器
 
 **Business type terms**:
-- 代理店, ディストリビューター, 問屋, 卸売, 经销商
+- 代理店, ディストリビューター, 問屋, 卸売, 经销商 (hanbaiki)
 
 **Example queries**:
 - EN: "fitness equipment distributor Japan B2B"
@@ -90,7 +90,7 @@
 - 健身器材, 运动器材, 训练设备
 
 **Business type terms**:
-- 经销商, 代理商, 批发商, 供货商
+- 经销商, 代理商, 批发商, 供货商, 经销商
 
 **Example queries**:
 - EN: "fitness equipment distributor China B2B"
@@ -158,7 +158,7 @@
 
 1. **Multi-word product terms** often yield better results than single words
 2. **Add "B2B"** to filter out consumer results
-3. **Add "commercial"** or "professional"** for trade-facing companies
+3. **Add "commercial"** or "professional" for trade-facing companies
 4. **For distributors**, try both "distributor" and "dealer" / "reseller"
 5. **For manufacturers**, add "OEM", "factory", "manufacturer"
 6. **For trading companies**, add "import", "export", "trading", "international"
