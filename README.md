@@ -20,6 +20,7 @@ b2b-lead-scout/
 |-- README.md
 |-- SKILL.md
 |-- examples/
+|   |-- sample_batch_leads.csv
 |   |-- sample_leads_industrial-sensors_germany.csv
 |   |-- sample_leads_industrial-sensors_germany.md
 |   `-- sample_batch_leads.md
@@ -55,14 +56,16 @@ The CSV is intended for spreadsheet review. The Markdown file summarizes result 
 
 For batch mode, the skill can also produce:
 
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].csv`
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].md`
 
-In batch mode, the Markdown output is a single flat table with one row per lead and task-level columns such as `batch_id`, `task_id`, `region`, and `product`. This avoids generating a separate control summary file.
+In batch mode, both CSV and Markdown outputs are flat, row-based exports with one row per lead and task-level columns such as `batch_id`, `task_id`, `region`, and `product`. The CSV and Markdown schemas should match.
 
 ## Sample Outputs
 
 Illustrative output templates live in `examples/`:
 
+- `examples/sample_batch_leads.csv`
 - `examples/sample_leads_industrial-sensors_germany.csv`
 - `examples/sample_leads_industrial-sensors_germany.md`
 - `examples/sample_batch_leads.md`
@@ -73,6 +76,7 @@ Use them as formatting references for:
 - how to separate `official_website`, `source_url`, and `evidence_url`
 - how to present verification status and confidence
 - how to structure the Markdown summary
+- how to structure a batch CSV export
 - how to structure a single-table batch Markdown export
 
 ## Output Fields
@@ -95,7 +99,7 @@ Use them as formatting references for:
 | confidence_score | 1-10 based on explicit scoring rules |
 | note | Gaps, caveats, or context |
 
-For batch-mode Markdown tables, prepend these task-level columns:
+For batch-mode CSV and Markdown tables, prepend these task-level columns:
 
 - `batch_id`
 - `task_id`

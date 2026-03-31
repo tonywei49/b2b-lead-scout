@@ -17,9 +17,10 @@ Search for B2B companies selling a specific product in a target region. The goal
 **Outputs**:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].csv` for batch mode
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].md` for batch mode
 - formatting reference: `examples/sample_leads_industrial-sensors_germany.csv` and `examples/sample_leads_industrial-sensors_germany.md`
-- batch formatting reference: `examples/sample_batch_leads.md`
+- batch formatting reference: `examples/sample_batch_leads.csv` and `examples/sample_batch_leads.md`
 
 **Required fields**:
 - company_name
@@ -254,6 +255,41 @@ Columns:
 - verification_status
 - confidence_score
 - note
+
+### Batch CSV
+
+When the user requests a **batch search** across multiple product/region tasks, also write:
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].csv`
+
+In batch CSV mode:
+- one row = one company lead
+- use the same column order as batch Markdown mode
+- sort rows by `confidence_score` descending, then by `region`, then by `product`
+- use UTF-8 with BOM for spreadsheet compatibility
+
+Required batch CSV columns:
+- batch_id
+- task_id
+- region
+- product
+- requested_business_type
+- company_name
+- country
+- city_or_region
+- official_website
+- source_url
+- evidence_url
+- contact_person
+- contact_title
+- email
+- email_source
+- main_products
+- business_type
+- verification_status
+- confidence_score
+- note
+
+Use the exact column order shown in `examples/sample_batch_leads.csv`.
 
 ### Markdown Summary
 
