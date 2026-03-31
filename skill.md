@@ -1,6 +1,6 @@
 ---
 name: b2b-lead-scout
-description: B2B lead discovery skill. Searches for companies selling specific products in target regions, collects company background (name, location, website, contact person, email, main products), and outputs structured CSV/MD files. Use when: (1) doing outbound lead generation, (2) finding B2B distributors or resellers in a specific country/region, (3) building a prospect list for cold outreach. Triggers: phrase like "find companies in [country] selling [product]", "search B2B distributors [region]", "找[国家]销售[产品]的公司", "find [product] suppliers [country]".
+description: B2B lead discovery skill. Searches for companies selling specific products in target regions, collects company background (name, location, website, contact person, email, main products), and outputs structured CSV/MD files. Use when: (1) doing outbound lead generation, (2) finding B2B distributors or resellers in a specific country/region, (3) building a prospect list for cold outreach. Triggers: "find companies in [country] selling [product]", "search B2B distributors [region]", "find [product] suppliers [country]", or any request to discover companies by product and region for sales outreach.
 ---
 
 # B2B Lead Scout
@@ -66,8 +66,8 @@ Run all 6 queries in parallel, collect all results.
 ## Step 4 — Deduplicate Companies
 
 Merge results from all query variations:
-- Same company name / domain → keep highest confidence entry
-- Same website URL → merge contact fields
+- Same company name / domain — keep highest confidence entry
+- Same website URL — merge contact fields
 - Use domain as primary deduplication key
 
 ---
@@ -98,7 +98,7 @@ Using Tavily search for each company:
 Score each lead 1-10 based on data completeness:
 
 | Score | Criteria |
-|-------|---------- |
+|-------|----------|
 | 9-10 | Email confirmed + contact person confirmed + website complete + product match clear |
 | 7-8 | Email confirmed + product match + website complete |
 | 5-6 | Website confirmed + product match confirmed, no direct email/contact |
