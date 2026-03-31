@@ -17,7 +17,9 @@ Search for B2B companies selling a specific product in a target region. The goal
 **Outputs**:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].md` for batch mode
 - formatting reference: `examples/sample_leads_industrial-sensors_germany.csv` and `examples/sample_leads_industrial-sensors_germany.md`
+- batch formatting reference: `examples/sample_batch_leads.md`
 
 **Required fields**:
 - company_name
@@ -35,6 +37,13 @@ Search for B2B companies selling a specific product in a target region. The goal
 - verification_status
 - confidence_score
 - note
+
+**Batch-mode fields**:
+- batch_id
+- task_id
+- region
+- product
+- requested_business_type
 
 ---
 
@@ -262,6 +271,49 @@ Include:
 - search gaps and suggested follow-up queries
 
 Follow the section order and field naming shown in `examples/sample_leads_industrial-sensors_germany.md`.
+
+### Batch Markdown Table
+
+When the user requests a **batch search** across multiple product/region tasks, do **not** generate one Markdown report per task and do **not** generate a separate summary/control report.
+
+Instead, write a single Markdown file:
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].md`
+
+This file must contain:
+- one short title
+- one short note describing the batch
+- one flat Markdown table containing **all leads from all tasks**
+
+In batch mode:
+- one row = one company lead
+- include task context directly in the row
+- sort rows by `confidence_score` descending, then by `region`, then by `product`
+- keep the column order stable across runs
+- do not add narrative sections below the table unless the user explicitly asks for them
+
+Required batch Markdown columns:
+- batch_id
+- task_id
+- region
+- product
+- requested_business_type
+- company_name
+- country
+- city_or_region
+- official_website
+- source_url
+- evidence_url
+- contact_person
+- contact_title
+- email
+- email_source
+- main_products
+- business_type
+- verification_status
+- confidence_score
+- note
+
+Use the exact table style shown in `examples/sample_batch_leads.md`.
 
 ---
 
