@@ -17,6 +17,7 @@ Search for B2B companies selling a specific product in a target region. The goal
 **Outputs**:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+- formatting reference: `examples/sample_leads_industrial-sensors_germany.csv` and `examples/sample_leads_industrial-sensors_germany.md`
 
 **Required fields**:
 - company_name
@@ -259,6 +260,8 @@ Include:
 - manual-review leads
 - data quality issues
 - search gaps and suggested follow-up queries
+
+Follow the section order and field naming shown in `examples/sample_leads_industrial-sensors_germany.md`.
 
 ---
 

@@ -17,7 +17,11 @@ B2B lead discovery skill for AutoClaw / OpenClaw agents. It searches for compani
 
 ```text
 b2b-lead-scout/
-|-- skill.md
+|-- README.md
+|-- SKILL.md
+|-- examples/
+|   |-- sample_leads_industrial-sensors_germany.csv
+|   `-- sample_leads_industrial-sensors_germany.md
 `-- references/
     `-- country-search-terms.md
 ```
@@ -47,6 +51,20 @@ Each run produces two files in the workspace:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
 
 The CSV is intended for spreadsheet review. The Markdown file summarizes result quality, lead mix, and follow-up search gaps.
+
+## Sample Outputs
+
+Illustrative output templates live in `examples/`:
+
+- `examples/sample_leads_industrial-sensors_germany.csv`
+- `examples/sample_leads_industrial-sensors_germany.md`
+
+Use them as formatting references for:
+
+- CSV column order
+- how to separate `official_website`, `source_url`, and `evidence_url`
+- how to present verification status and confidence
+- how to structure the Markdown summary
 
 ## Output Fields
 
