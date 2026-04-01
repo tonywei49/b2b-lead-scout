@@ -27,6 +27,7 @@ Search for B2B companies selling a specific product in a target region. The goal
 - batch formatting reference: `examples/sample_batch_leads.csv` and `examples/sample_batch_leads.md`
 - export helper: `scripts/export_leads.py`
 - Windows fallback exporter: `scripts/export_leads.ps1`
+- runtime check helper: `scripts/check_export_runtime.ps1`
 
 **Required fields**:
 - company_name
@@ -69,6 +70,26 @@ Rules:
 - exports must be generated from a fixed column list
 
 This matters because users may have OpenClaw installed without a system Python runtime.
+
+Runtime detection commands:
+1. Run `powershell -ExecutionPolicy Bypass -File scripts/check_export_runtime.ps1`
+2. If `preferred_exporter` is `python`, call `scripts/export_leads.py`
+3. If `preferred_exporter` is `powershell`, call `scripts/export_leads.ps1`
+4. If `preferred_exporter` is `json_fallback`, write `.json` plus `.md`
+
+Expected runtime check fields:
+- `python_available`
+- `python_command`
+- `openpyxl_available`
+- `powershell_available`
+- `preferred_exporter`
+- `xlsx_supported`
+
+Runtime policy:
+- prefer Python whenever available
+- only advertise `.xlsx` when `openpyxl_available` is true
+- on Windows without Python, use the PowerShell exporter for `.csv`, `.md`, and `.json`
+- if runtime detection fails, fall back conservatively to `.json` plus `.md`
 
 ---
 

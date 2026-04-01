@@ -25,6 +25,7 @@ b2b-lead-scout/
 |   |-- sample_leads_industrial-sensors_germany.md
 |   `-- sample_batch_leads.md
 |-- scripts/
+|   |-- check_export_runtime.ps1
 |   |-- export_leads.py
 |   `-- export_leads.ps1
 `-- references/
@@ -79,6 +80,39 @@ Exports should be written with Python, not manual string concatenation.
 
 If neither Python nor the Windows PowerShell fallback is available, fall back to `.json` plus `.md`.
 
+## Runtime Detection
+
+Before exporting files, detect the available runtime:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/check_export_runtime.ps1
+```
+
+The script reports:
+
+- `python_available`
+- `python_command`
+- `openpyxl_available`
+- `powershell_available`
+- `preferred_exporter`
+- `xlsx_supported`
+
+Recommended behavior:
+
+- if `preferred_exporter=python`, run `scripts/export_leads.py`
+- if `preferred_exporter=powershell`, run `scripts/export_leads.ps1`
+- if `preferred_exporter=json_fallback`, skip spreadsheet export and write `.json` plus `.md`
+
+Typical commands:
+
+```powershell
+python scripts/export_leads.py --input leads.json --output-dir . --mode batch --batch-slug demo
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/export_leads.ps1 -InputPath leads.json -OutputDir . -Mode batch -BatchSlug demo
+```
+
 ## Sample Outputs
 
 Illustrative output templates live in `examples/`:
@@ -87,6 +121,7 @@ Illustrative output templates live in `examples/`:
 - `examples/sample_leads_industrial-sensors_germany.csv`
 - `examples/sample_leads_industrial-sensors_germany.md`
 - `examples/sample_batch_leads.md`
+- `scripts/check_export_runtime.ps1`
 - `scripts/export_leads.py`
 - `scripts/export_leads.ps1`
 
