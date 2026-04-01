@@ -17,13 +17,16 @@ Search for B2B companies selling a specific product in a target region. The goal
 **Outputs**:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].json` fallback
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].xlsx` optional
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].csv` for batch mode
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].md` for batch mode
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].json` fallback
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].xlsx` optional
 - formatting reference: `examples/sample_leads_industrial-sensors_germany.csv` and `examples/sample_leads_industrial-sensors_germany.md`
 - batch formatting reference: `examples/sample_batch_leads.csv` and `examples/sample_batch_leads.md`
 - export helper: `scripts/export_leads.py`
+- Windows fallback exporter: `scripts/export_leads.ps1`
 
 **Required fields**:
 - company_name
@@ -48,6 +51,24 @@ Search for B2B companies selling a specific product in a target region. The goal
 - region
 - product
 - requested_business_type
+
+---
+
+## Step 0 - Check Export Runtime
+
+Before writing output files, detect the available export runtime.
+
+Preferred order:
+1. Python available: use `scripts/export_leads.py`
+2. Windows PowerShell available but no Python: use `scripts/export_leads.ps1`
+3. Neither runtime available: write canonical `.json` plus `.md`, and clearly note that CSV/XLSX export was skipped
+
+Rules:
+- never hand-build CSV by concatenating raw strings with separators
+- never rely on the model to "visually align" rows
+- exports must be generated from a fixed column list
+
+This matters because users may have OpenClaw installed without a system Python runtime.
 
 ---
 
@@ -238,10 +259,11 @@ Filename:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 
 Rules:
-- export with **Python only**; do not hand-build CSV with string concatenation
-- use `encoding='utf-8-sig'` for Excel compatibility
-- open the file with `newline=''`
-- use Python `csv.DictWriter` with an explicit `fieldnames` list
+- prefer the Python exporter `scripts/export_leads.py`
+- if Python is unavailable on Windows, use `scripts/export_leads.ps1`
+- do not hand-build CSV with string concatenation
+- use UTF-8 with BOM for Excel compatibility
+- use an explicit fixed `fieldnames` / column list
 - quote all fields to protect commas, line breaks, and delimiter confusion
 - convert `None` to an empty string `''`
 - never drop a column when a value is empty
@@ -281,7 +303,7 @@ In batch CSV mode:
 - one row = one company lead
 - use the same column order as batch Markdown mode
 - sort rows by `confidence_score` descending, then by `region`, then by `product`
-- use the same Python export rules as single CSV mode
+- use the same runtime rules as single CSV mode
 - use UTF-8 with BOM for spreadsheet compatibility
 
 Required batch CSV columns:
@@ -343,7 +365,8 @@ Include:
 Follow the section order and field naming shown in `examples/sample_leads_industrial-sensors_germany.md`.
 
 Markdown export rules:
-- export with Python only; do not hand-build rows with inconsistent separators
+- prefer Python exporter, or PowerShell fallback on Windows
+- do not hand-build rows with inconsistent separators
 - convert `None` to `''`
 - replace embedded newlines in cell values with `<br>`
 - escape pipe characters `|` inside cell values
@@ -355,6 +378,18 @@ Markdown does **not** have the same encoding issue as CSV in Excel, but malforme
 - the row is emitted with fewer cells than the header
 
 Therefore the Markdown table must also be generated programmatically from a fixed column list.
+
+### JSON Fallback
+
+If neither Python nor the Windows PowerShell fallback is available, write:
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].json`
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].json`
+
+JSON rules:
+- use UTF-8
+- keep the same field names as the CSV / Markdown schema
+- preserve array order after sorting by `confidence_score` descending, then by `region`, then by `product`
+- use JSON as the canonical fallback artifact when spreadsheet export is unavailable
 
 ### Batch Markdown Table
 
