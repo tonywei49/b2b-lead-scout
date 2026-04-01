@@ -24,6 +24,8 @@ b2b-lead-scout/
 |   |-- sample_leads_industrial-sensors_germany.csv
 |   |-- sample_leads_industrial-sensors_germany.md
 |   `-- sample_batch_leads.md
+|-- scripts/
+|   `-- export_leads.py
 `-- references/
     `-- country-search-terms.md
 ```
@@ -61,6 +63,19 @@ For batch mode, the skill can also produce:
 
 In batch mode, both CSV and Markdown outputs are flat, row-based exports with one row per lead and task-level columns such as `batch_id`, `task_id`, `region`, and `product`. The CSV and Markdown schemas should match.
 
+## Export Rules
+
+Exports should be written with Python, not manual string concatenation.
+
+- CSV must use `utf-8-sig` so Excel opens Chinese text correctly
+- CSV must be written from a fixed field list so empty values stay in the right column
+- CSV fields should be quoted to protect commas and embedded line breaks
+- Markdown tables must also be generated from a fixed field list
+- Markdown cell values should escape `|` and replace line breaks with `<br>`
+- if exact Excel display matters for phone numbers or long numeric-like strings, also export `.xlsx` with text-formatted cells
+
+The repository includes `scripts/export_leads.py` as a reference implementation for both single-task and batch exports.
+
 ## Sample Outputs
 
 Illustrative output templates live in `examples/`:
@@ -69,6 +84,7 @@ Illustrative output templates live in `examples/`:
 - `examples/sample_leads_industrial-sensors_germany.csv`
 - `examples/sample_leads_industrial-sensors_germany.md`
 - `examples/sample_batch_leads.md`
+- `scripts/export_leads.py`
 
 Use them as formatting references for:
 

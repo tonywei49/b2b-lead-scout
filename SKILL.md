@@ -17,10 +17,13 @@ Search for B2B companies selling a specific product in a target region. The goal
 **Outputs**:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].md`
+- `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].xlsx` optional
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].csv` for batch mode
 - `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].md` for batch mode
+- `batch_leads_[batch_slug]_[YYYY-MM-DD_HHMM].xlsx` optional
 - formatting reference: `examples/sample_leads_industrial-sensors_germany.csv` and `examples/sample_leads_industrial-sensors_germany.md`
 - batch formatting reference: `examples/sample_batch_leads.csv` and `examples/sample_batch_leads.md`
+- export helper: `scripts/export_leads.py`
 
 **Required fields**:
 - company_name
@@ -235,7 +238,14 @@ Filename:
 - `leads_[product_slug]_[region_slug]_[YYYY-MM-DD_HHMM].csv`
 
 Rules:
-- use UTF-8 with BOM for Excel compatibility
+- export with **Python only**; do not hand-build CSV with string concatenation
+- use `encoding='utf-8-sig'` for Excel compatibility
+- open the file with `newline=''`
+- use Python `csv.DictWriter` with an explicit `fieldnames` list
+- quote all fields to protect commas, line breaks, and delimiter confusion
+- convert `None` to an empty string `''`
+- never drop a column when a value is empty
+- keep column order stable across runs
 - slugify `product` and `region` for safe filenames
 - one row per company
 
@@ -256,6 +266,12 @@ Columns:
 - confidence_score
 - note
 
+Why this is mandatory:
+- if the file is not written as `utf-8-sig`, Excel often shows Chinese text as mojibake
+- if empty fields are skipped instead of emitted as empty cells, later values shift left and columns no longer match
+- if commas or line breaks are not quoted correctly, spreadsheet apps split one logical cell into multiple columns or rows
+- if phone-like or ID-like values are opened in Excel, CSV may still be auto-formatted as scientific notation; export `.xlsx` as a secondary file when exact spreadsheet display matters
+
 ### Batch CSV
 
 When the user requests a **batch search** across multiple product/region tasks, also write:
@@ -265,6 +281,7 @@ In batch CSV mode:
 - one row = one company lead
 - use the same column order as batch Markdown mode
 - sort rows by `confidence_score` descending, then by `region`, then by `product`
+- use the same Python export rules as single CSV mode
 - use UTF-8 with BOM for spreadsheet compatibility
 
 Required batch CSV columns:
@@ -291,6 +308,23 @@ Required batch CSV columns:
 
 Use the exact column order shown in `examples/sample_batch_leads.csv`.
 
+### Optional XLSX Export
+
+If the output contains values that Excel tends to auto-convert, such as:
+- phone numbers
+- long numeric strings
+- postal codes
+- IDs with leading zeroes
+
+also export an `.xlsx` file from Python.
+
+XLSX rules:
+- write the same column order as the CSV
+- write all values as strings
+- set all worksheet cells to text format
+- use XLSX as the display-safe spreadsheet artifact
+- keep CSV as the interchange artifact
+
 ### Markdown Summary
 
 Filename:
@@ -307,6 +341,20 @@ Include:
 - search gaps and suggested follow-up queries
 
 Follow the section order and field naming shown in `examples/sample_leads_industrial-sensors_germany.md`.
+
+Markdown export rules:
+- export with Python only; do not hand-build rows with inconsistent separators
+- convert `None` to `''`
+- replace embedded newlines in cell values with `<br>`
+- escape pipe characters `|` inside cell values
+- keep the header and separator row fixed
+
+Markdown does **not** have the same encoding issue as CSV in Excel, but malformed row rendering can still happen if:
+- a cell contains an unescaped `|`
+- a cell contains raw line breaks
+- the row is emitted with fewer cells than the header
+
+Therefore the Markdown table must also be generated programmatically from a fixed column list.
 
 ### Batch Markdown Table
 
